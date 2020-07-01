@@ -1,10 +1,10 @@
 package com.paru.location
 
-
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.GoogleMap.OnMyLocationChangeListener
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
@@ -24,11 +24,20 @@ class MainActivity : AppCompatActivity() {
         mapFragment.getMapAsync(OnMapReadyCallback {
             googleMap = it
             googleMap.isMyLocationEnabled=true
-           
 
-            val location1=LatLng(28.644800,77.216721)
-            googleMap.addMarker(MarkerOptions().position(location1))
-            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location1,10f))
+            googleMap.setOnMyLocationChangeListener(OnMyLocationChangeListener { location ->
+                val center = CameraUpdateFactory.newLatLng(
+                    LatLng(
+                        location.latitude,
+                        location.longitude
+                    )
+                )
+                val zoom = CameraUpdateFactory.zoomTo(11f)
+               googleMap.moveCamera(center)
+                googleMap.animateCamera(zoom)
+                val currentLocation=LatLng(location.latitude,location.longitude)
+                googleMap.addMarker(MarkerOptions().position(currentLocation))
+            })
 
         })
     }
